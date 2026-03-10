@@ -1,188 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Simple To-Do List</title>
+<title>To Do List</title>
 
-  <!-- 🎨 Modern CSS -->
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
 
-    body {
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #74ebd5, #acb6e5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+body{
+  font-family: Arial;
+  background: linear-gradient(to right, #74ebd5, #9face6);
+  text-align: center;
+  padding-top: 80px;
+}
 
-    .todo-container {
-      background: white;
-      width: 360px;
-      border-radius: 20px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      padding: 25px;
-      animation: fadeIn 0.5s ease;
-    }
+.todo-container{
+  background: white;
+  width: 350px;
+  margin: auto;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+h2{
+  margin-bottom: 20px;
+}
 
-    h1 {
-      text-align: center;
-      font-size: 1.8em;
-      color: #333;
-      margin-bottom: 15px;
-    }
+input{
+  padding: 10px;
+  width: 65%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
 
-    .input-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+button{
+  padding: 10px 15px;
+  border: none;
+  background: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-    input[type="text"] {
-      flex: 1;
-      padding: 12px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      font-size: 1em;
-      outline: none;
-      transition: 0.3s;
-    }
+button:hover{
+  background: #45a049;
+}
 
-    input[type="text"]:focus {
-      border-color: #74ebd5;
-    }
+ul{
+  padding: 0;
+  margin-top: 20px;
+}
 
-    button {
-      background: #74ebd5;
-      color: white;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.3s, transform 0.2s;
-    }
+li{
+  list-style: none;
+  background: #f1f1f1;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+}
 
-    button:hover {
-      background: #50c9c3;
-      transform: translateY(-2px);
-    }
+.completed{
+  text-decoration: line-through;
+  color: gray;
+}
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+.delete-btn{
+  background: red;
+  padding: 5px 8px;
+  font-size: 12px;
+}
 
-    li {
-      background: #f8f8f8;
-      padding: 12px 14px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: 0.3s;
-    }
+</style>
 
-    li.completed {
-      text-decoration: line-through;
-      color: #999;
-      background: #e6f7f5;
-    }
-
-    .delete-btn {
-      background: none;
-      border: none;
-      color: #ff5c5c;
-      font-size: 1.3em;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .delete-btn:hover {
-      transform: scale(1.2);
-    }
-  </style>
 </head>
 
 <body>
-  <div class="todo-container">
-    <h1>To-Do List</h1>
-    <div class="input-row">
-      <input type="text" id="taskInput" placeholder="Add a new task..." />
-      <button id="addBtn">Add</button>
-    </div>
-    <ul id="taskList"></ul>
-  </div>
 
-  <script>
-    const taskInput = document.getElementById("taskInput");
-    const addBtn = document.getElementById("addBtn");
-    const taskList = document.getElementById("taskList");
+<div class="todo-container">
 
-    // Load tasks from localStorage
-    window.onload = () => {
-      const saved = JSON.parse(localStorage.getItem("tasks")) || [];
-      saved.forEach(task => addTask(task.text, task.completed));
-    };
+<h2>My To-Do List</h2>
 
-    addBtn.addEventListener("click", () => {
-      const text = taskInput.value.trim();
-      if (text) {
-        addTask(text);
-        taskInput.value = "";
-        saveTasks();
-      }
-    });
+<input type="text" id="taskInput" placeholder="Enter a task">
+<button onclick="addTask()">Add</button>
 
-    taskInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") addBtn.click();
-    });
+<ul id="taskList"></ul>
 
-    taskList.addEventListener("click", (e) => {
-      if (e.target.tagName === "LI") {
-        e.target.classList.toggle("completed");
-        saveTasks();
-      } else if (e.target.classList.contains("delete-btn")) {
-        e.target.parentElement.remove();
-        saveTasks();
-      }
-    });
+</div>
 
-    function addTask(text, completed = false) {
-      const li = document.createElement("li");
-      li.textContent = text;
-      if (completed) li.classList.add("completed");
+<script>
 
-      const delBtn = document.createElement("button");
-      delBtn.textContent = "×";
-      delBtn.className = "delete-btn";
-      li.appendChild(delBtn);
+function addTask(){
 
-      taskList.appendChild(li);
-    }
+let input = document.getElementById("taskInput");
+let task = input.value;
 
-    function saveTasks() {
-      const tasks = [];
-      document.querySelectorAll("#taskList li").forEach(li => {
-        tasks.push({
-          text: li.firstChild.textContent,
-          completed: li.classList.contains("completed")
-        });
-      });
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
-  </script>
+if(task === "") return;
+
+let li = document.createElement("li");
+
+li.innerHTML = task + " <button class='delete-btn' onclick='deleteTask(this)'>X</button>";
+
+li.onclick = function(){
+this.classList.toggle("completed");
+};
+
+document.getElementById("taskList").appendChild(li);
+
+input.value="";
+
+}
+
+function deleteTask(btn){
+btn.parentElement.remove();
+}
+
+</script>
+
 </body>
 </html>
